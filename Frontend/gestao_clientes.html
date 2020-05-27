@@ -1,0 +1,259 @@
+<html>
+<head>
+	<title>Gestão de dados de Clientes</title>
+	<link rel="stylesheet" type="text/css" href="./style.css" />
+	<link rel="stylesheet" type="text/css" href="./wick.css" />
+	<meta charset="UTF-8">
+</head>
+<body>
+	<header id="main-header">
+		<div class="my-container">
+			<h1>Gestão de dados de Clientes</h1>
+		</div>
+	</header>
+	<nav id="navbar">
+		<div class="my-container">
+			<h1></h1>
+		</div>
+	</nav>
+	<script type="text/javascript" language="JavaScript">
+		function checkForm() {
+		answer = true;
+		if (siw && siw.selectingSomething)
+			answer = false;
+		return answer;
+		}
+	</script>
+<p>
+<div class="container">
+<form method="POST" class="my-form"> <!-- Início do form -->
+		<p>NIF</p>
+		<textarea id="nif"  cols="10" rows="1" ></textarea>
+		<p>Nome</p>
+		<textarea id="nome"  cols="10" rows="1"></textarea>
+		<p>Morada</p>
+		<textarea id="morada"  cols="10" rows="1"></textarea>
+		<p>Telefone</p>
+		<textarea id="telefone"  cols="10" rows="1"></textarea> <br /> <br />
+		
+	<div class="button-sub">
+		<button type="button" onClick="adicionarCliente()">Adicionar </button>
+		<button type="button" onClick="apagarCliente()">Apagar</button>
+		<button type="button" onClick="listarClientes()">Listar </button>
+		<button type="button" onClick="infoCliente()">Informação</button>
+		<button type="button" onClick="mesmoNome()">Nome Igual</button>
+	</div>
+	<p id="demo"></p>
+
+	<p>Resultado</p>
+		<textarea id="res"  cols="10" rows="3" ></textarea>
+</form><!-- ./form -->
+
+</div>
+</p>
+</left>
+
+<script>
+function adicionarCliente(){
+	var finale = "{\"NIF\":";
+	var nif = document.getElementById("nif").value;
+	var nome = document.getElementById("nome").value;
+	var morada = document.getElementById("morada").value;
+	var telefone = document.getElementById("telefone").value;
+	finale = finale.concat(nif);
+	finale = finale.concat(", \"nome\":\"");
+	finale = finale.concat(nome);
+	finale = finale.concat("\",\"morada\":\"");
+	finale = finale.concat(morada);
+	finale = finale.concat("\",\"telefone\":");
+	finale = finale.concat(telefone);
+	finale = finale.concat("}");
+
+	alert(finale)
+
+
+	var xhr = new XMLHttpRequest();
+	//xhr.withCredentials = true;
+
+	xhr.addEventListener("readystatechange", function () {
+	  if (this.readyState === 4) {
+	    document.getElementById("res").value = this.responseText;
+	  }
+	});
+
+	//xhr.open("POST", "http://localhost:8080/Teste/pack/webservice");
+	xhr.open("POST", "http://localhost:8080/Multicert/pack/webservice/adicionarCliente");
+	xhr.setRequestHeader("content-type", "application/json");
+	xhr.setRequestHeader("cache-control", "no-cache");
+	xhr.setRequestHeader("postman-token", "73c7a4c3-400e-6b41-a669-e5b2370ac3ab");
+	xhr.send(finale);
+
+
+}
+function apagarCliente(){
+	var finale = "{\"NIF\":";
+	var nif = document.getElementById("nif").value;
+	var nome = document.getElementById("nome").value;
+	var morada = document.getElementById("morada").value;
+	var telefone = document.getElementById("telefone").value;
+	finale = finale.concat(nif);
+	finale = finale.concat(", \"nome\":\"");
+	finale = finale.concat(nome);
+	finale = finale.concat("\",\"morada\":\"");
+	finale = finale.concat(morada);
+	finale = finale.concat("\",\"telefone\":");
+	finale = finale.concat(telefone);
+	finale = finale.concat("}");
+
+	var xhr = new XMLHttpRequest();
+	//xhr.withCredentials = true;
+
+	xhr.addEventListener("readystatechange", function () {
+	  if (this.readyState === 4) {
+	    document.getElementById("res").value = this.responseText;
+	  }
+	});
+
+	//xhr.open("POST", "http://localhost:8080/Teste/pack/webservice");
+	xhr.open("PUT", "http://localhost:8080/Multicert/pack/webservice/apagarCliente");
+	xhr.setRequestHeader("content-type", "application/json");
+	xhr.setRequestHeader("cache-control", "no-cache");
+	xhr.setRequestHeader("postman-token", "73c7a4c3-400e-6b41-a669-e5b2370ac3ab");
+	xhr.send(finale);
+
+
+}
+function listarClientes(){
+	var xhr = new XMLHttpRequest();
+		//xhr.withCredentials = true;
+
+		xhr.addEventListener("readystatechange", function () {
+		  if (this.readyState === 4) {
+		  	if(!this.responseText.includes("{"))
+		    	document.getElementById("res").value = this.responseText;
+		    else
+		    {
+		    	var finale = "";
+
+		    	var obj = JSON.parse(this.responseText);
+		    	for(var i= 0; i <obj.length;i++)
+		    	{
+		    		var each = "->";
+		    		var p = obj[i]
+		    		for(var key in p)
+		    		{
+		    			each = each.concat(key);
+		    			each = each.concat(": ");
+		    			each = each.concat(p[key]);
+		    			each = each.concat(", ");
+		    		}
+		    		each = each.slice(0, -2);
+		    		finale = finale.concat(each);
+		    		finale = finale.concat("\n");
+		    	}
+
+		    	document.getElementById("res").value = finale;
+		    }
+		  }
+		});
+
+	xhr.open("GET", "http://localhost:8080/Multicert/pack/webservice/todosClientes");
+	xhr.setRequestHeader("content-type", "application/json");
+	xhr.setRequestHeader("cache-control", "no-cache");
+	xhr.setRequestHeader("postman-token", "73c7a4c3-400e-6b41-a669-e5b2370ac3ab");
+	xhr.send();
+
+	
+}
+function infoCliente(){
+	var finale = "{\"NIF\":";
+	var nif = document.getElementById("nif").value;
+	finale = finale.concat(nif);
+	finale = finale.concat("}");
+
+	var xhr = new XMLHttpRequest();
+
+		xhr.addEventListener("readystatechange", function () {
+		  if (this.readyState === 4) {
+		  	if(!this.responseText.includes("{"))
+		    	document.getElementById("res").value = this.responseText;
+		    else
+		    {
+		    		var finale1 = "";
+
+		    	var obj = JSON.parse(this.responseText);
+		    	for(var i= 0; i <obj.length;i++)
+		    	{
+		    		var each = "";
+		    		var p = obj[i]
+		    		for(var key in p)
+		    		{
+		    			each = each.concat(key);
+		    			each = each.concat(": ");
+		    			each = each.concat(p[key]);
+		    			each = each.concat(", ");
+		    		}
+		    		each = each.slice(0, -2);
+		    		finale1 = finale1.concat(each);
+		    		finale1 = finale1.concat("\n");
+		    	}
+
+		    	document.getElementById("res").value = finale1;
+		    }
+		  }
+		});
+
+	xhr.open("POST", "http://localhost:8080/Multicert/pack/webservice/infoNIF");
+	xhr.setRequestHeader("content-type", "application/json");
+	xhr.setRequestHeader("cache-control", "no-cache");
+	xhr.setRequestHeader("postman-token", "73c7a4c3-400e-6b41-a669-e5b2370ac3ab");
+	xhr.send(finale);
+}
+function mesmoNome(){
+	var finale = "{\"nome\":\"";
+	var nome = document.getElementById("nome").value;
+	finale = finale.concat(nome);
+	finale = finale.concat("\"}");
+
+	var xhr = new XMLHttpRequest();
+
+		xhr.addEventListener("readystatechange", function () {
+		  if (this.readyState === 4) {
+		  	if(!this.responseText.includes("{"))
+		    	document.getElementById("res").value = this.responseText;
+		    else
+		    {
+		    	var finale1 = "";
+		    	
+		    	var obj = JSON.parse(this.responseText);
+		    	for(var i = 0; i < obj.length; i++)
+		    	{
+		    		var each = "";
+		    		var p = obj[i]
+		    		for(var key in p)
+		    		{
+		    			each = each.concat(key);
+		    			each = each.concat(": ");
+		    			each = each.concat(p[key]);
+		    			each = each.concat(", ");
+		    		}
+		    		each = each.slice(0, -2);
+		    		finale1 = finale1.concat(each);
+		    		finale1 = finale1.concat("\n");
+		    	}
+
+		    	document.getElementById("res").value = finale1;
+		    }
+		  }
+		});
+
+	xhr.open("POST", "http://localhost:8080/Multicert/pack/webservice/clientesNome");
+	xhr.setRequestHeader("content-type", "application/json");
+	xhr.setRequestHeader("cache-control", "no-cache");
+	xhr.setRequestHeader("postman-token", "73c7a4c3-400e-6b41-a669-e5b2370ac3ab");
+	xhr.send(finale);
+}
+
+</script>
+</body>
+</html>
